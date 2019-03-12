@@ -43,29 +43,33 @@ def add_swipe_transition_frames_with_duration(image_info, n_steps=10, transit_du
     images.append(image_info[-1])
     return images
 
-frame_info = [line.split(',') for line in open('order.csv').read().split('\n')[1:]]
-frame_list = [f[0] for f in frame_info]
-frame_duration = [int(f[1])*30 for f in frame_info]
+def animate(order_input_path, video_output_path):
+    frame_info = [line.split(',') for line in open(order_input_path).read().split('\n')[1:]]
+    frame_list = [f[0] for f in frame_info]
+    frame_duration = [int(f[1])*30 for f in frame_info]
 
-base_height, base_width = cv2.imread(frame_list[0]).shape[:2]
-for f in frame_info:
-    if f[2] == '1':
-        base_height, base_width = cv2.imread(f[0]).shape[:2]
-        break
+    base_height, base_width = cv2.imread(frame_list[0]).shape[:2]
+    for f in frame_info:
+        if f[2] == '1':
+            base_height, base_width = cv2.imread(f[0]).shape[:2]
+            break
 
-print base_width, base_height
-print frame_list
-images = extract_frames(frame_list, base_width, base_height)
-image_info = [(images[i], frame_duration[i]) for i in range(len(images))]
-image_info = add_swipe_transition_frames_with_duration(image_info, 10, 0.5)
+    print base_width, base_height
+    print frame_list
+    images = extract_frames(frame_list, base_width, base_height)
+    image_info = [(images[i], frame_duration[i]) for i in range(len(images))]
+    image_info = add_swipe_transition_frames_with_duration(image_info, 10, 0.5)
 
-video_output_path = 'output.mp4'
-fps = 30
-fourcc = cv2.VideoWriter_fourcc('a','v','c','1')
-video_writer = cv2.VideoWriter(video_output_path, fourcc, fps, (base_width, base_height))
-for img, duration in image_info:
-    cv2.imshow(' ',img)
-    cv2.waitKey(0)
-    for i in range(int(math.ceil(duration))):
-        video_writer.write(img)
-video_writer.release()
+    video_output_path
+    fps = 30
+    fourcc = cv2.VideoWriter_fourcc(*'MP4V')
+    video_writer = cv2.VideoWriter(video_output_path, fourcc, fps, (base_width, base_height))
+    for img, duration in image_info:
+        # cv2.imshow(' ',img)
+        # cv2.waitKey(0)
+        for i in range(int(math.ceil(duration))):
+            video_writer.write(img)
+    video_writer.release()
+
+if __name__ == '__main__':
+    animate(order_input_path='order.csv', video_output_path='output.mp4')
