@@ -1,5 +1,5 @@
 *.mp4
-slides_swipe_render/slides/*
+*.jpg
 *.DS_Store
 # Byte-compiled / optimized / DLL files
 __pycache__/
