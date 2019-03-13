@@ -29,7 +29,7 @@ def extract_frames(frame_list, base_width, base_height):
         images.append(img)
     return images
 
-def add_wipe_transition_frames_with_duration(image_info, n_steps=10, transit_duration=1):
+def add_recast_transition_frames_with_duration(image_info, n_steps=10, transit_duration=1):
     images = []
     for i in range(len(image_info)-1):
         images.append(image_info[i])
@@ -37,8 +37,11 @@ def add_wipe_transition_frames_with_duration(image_info, n_steps=10, transit_dur
         img2 = image_info[i+1][0]
         step_duration = transit_duration * 30.0 / n_steps
         step_size = img1.shape[1] / n_steps
+        transition_pad_width = img1.shape[0]/200
+        transition_pad = img1[:,0:transition_pad_width,:]
+        transition_pad.fill(128)
         for step in range(n_steps):
-            img_transit = np.concatenate([img1[:,step*step_size:,:], img2[:,:step*step_size,:]], axis=1)
+            img_transit = np.concatenate([img2[:,:step*step_size-transition_pad_width,:], transition_pad, img1[:,step*step_size:,:]], axis=1)
             images.append((img_transit, step_duration))
     images.append(image_info[-1])
     return images
@@ -58,7 +61,7 @@ def animate(order_input_path, video_output_path):
     print frame_list
     images = extract_frames(frame_list, base_width, base_height)
     image_info = [(images[i], frame_duration[i]) for i in range(len(images))]
-    image_info = add_wipe_transition_frames_with_duration(image_info, 10, 0.5)
+    image_info = add_recast_transition_frames_with_duration(image_info, 10, 0.5)
 
     video_output_path
     fps = 30
